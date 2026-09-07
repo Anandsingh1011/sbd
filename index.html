@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Scoreboard</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #f1f5f9;
+    padding: 20px;
+  }
+  .card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  h1 {
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0 0 20px;
+  }
+  .score {
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 10px 0;
+    color: #38bdf8;
+    word-break: break-word;
+  }
+  .status-text {
+    font-size: 18px;
+    color: #cbd5e1;
+    margin-top: 10px;
+    min-height: 24px;
+    word-break: break-word;
+  }
+  .meta {
+    margin-top: 25px;
+    font-size: 12px;
+    color: #64748b;
+  }
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    margin-right: 6px;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
+  .flash {
+    animation: flash 0.6s ease;
+  }
+  @keyframes flash {
+    0%   { transform: scale(1.15); color: #4ade80; }
+    100% { transform: scale(1); color: #38bdf8; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Live Scoreboard</h1>
+  <div class="score" id="score">--</div>
+  <div class="status-text" id="statusText">Waiting for data…</div>
+  <div class="meta"><span class="dot"></span><span id="connState">connecting…</span> · updated <span id="updatedAt">–</span></div>
+</div>
+
+<!-- Firebase (free Spark plan) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+  // ⚠️ Fill these in from your own Firebase project (Project Settings > General > Your apps > SDK config)
+ // const firebaseConfig = {
+ //   apiKey: "YOUR_API_KEY",
+  //  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  //  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+  //  projectId: "YOUR_PROJECT_ID"
+ // };
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyAPHVIYyQk4deTY1uMlj7-5IvNtpdBzFNk",
+  authDomain: "eboard-bad04.firebaseapp.com",
+  databaseURL: "https://eboard-bad04-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "eboard-bad04",
+  storageBucket: "eboard-bad04.firebasestorage.app",
+  messagingSenderId: "1058912136329",
+  appId: "1:1058912136329:web:bd7648584a64955961aa58"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const ref = db.ref("scoreboard"); // matches the path used by the API examples
+
+  const scoreEl = document.getElementById("score");
+  const textEl = document.getElementById("statusText");
+  const updatedEl = document.getElementById("updatedAt");
+  const connEl = document.getElementById("connState");
+
+  ref.on("value", (snapshot) => {
+    const data = snapshot.val() || {};
+    scoreEl.textContent = data.score !== undefined ? data.score : "--";
+    textEl.textContent = data.text || "";
+    updatedEl.textContent = data.updatedAt
+      ? new Date(data.updatedAt).toLocaleString()
+      : "–";
+    scoreEl.classList.remove("flash");
+    void scoreEl.offsetWidth; // restart animation
+    scoreEl.classList.add("flash");
+  });
+
+  db.ref(".info/connected").on("value", (snap) => {
+    connEl.textContent = snap.val() ? "live" : "reconnecting…";
+  });
+</script>
+
+</body>
+</html>
