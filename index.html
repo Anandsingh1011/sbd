@@ -9,99 +9,37 @@
   body {
     margin: 0;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background: linear-gradient(135deg, #0f172a, #1e293b);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #f1f5f9;
-    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
   }
   .card {
     background: #1e293b;
     border: 1px solid #334155;
-    border-radius: 20px;
-    padding: 32px 36px;
-    max-width: 640px;
+    border-radius: 24px;
+    padding: 48px 56px;
+    max-width: 960px;
     width: 100%;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
   }
-  .header {
+  .topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 18px;
+    margin-bottom: 36px;
   }
   h1 {
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: #64748b;
     margin: 0;
   }
-  .q-number {
-    font-size: 13px;
-    font-weight: 700;
-    color: #38bdf8;
-    background: rgba(56,189,248,0.12);
-    border: 1px solid rgba(56,189,248,0.35);
-    border-radius: 999px;
-    padding: 4px 14px;
-    white-space: nowrap;
-  }
-  .label {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #64748b;
-    margin: 18px 0 6px;
-  }
-  .question {
-    font-size: 17px;
-    line-height: 1.55;
-    color: #cbd5e1;
-    margin: 0;
-    word-break: break-word;
-    white-space: pre-wrap;
-  }
-  .answer {
-    display: inline-block;
-    font-size: 26px;
-    font-weight: 800;
-    color: #4ade80;
-    background: rgba(74,222,128,0.10);
-    border: 1px solid rgba(74,222,128,0.35);
-    border-radius: 12px;
-    padding: 8px 18px;
-    letter-spacing: 1px;
-  }
-  .options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .option {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: 700;
-    border-radius: 10px;
-    background: #0f172a;
-    border: 1px solid #334155;
-    color: #64748b;
-  }
-  .option.correct {
-    background: rgba(74,222,128,0.15);
-    border-color: rgba(74,222,128,0.6);
-    color: #4ade80;
-  }
-  .meta {
-    margin-top: 24px;
-    padding-top: 14px;
-    border-top: 1px solid #334155;
+  .live {
     font-size: 12px;
     color: #64748b;
   }
@@ -119,11 +57,53 @@
     50%  { opacity: 0.3; }
     100% { opacity: 1; }
   }
+  section { padding: 28px 0; }
+  .divider {
+    border: none;
+    border-top: 1px solid #334155;
+    margin: 0;
+  }
+  .label {
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 14px;
+  }
+  .q-number {
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1;
+    color: #38bdf8;
+  }
+  .question {
+    font-size: 22px;
+    line-height: 1.6;
+    color: #e2e8f0;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .answer {
+    font-size: 44px;
+    font-weight: 800;
+    color: #4ade80;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .answer.long {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: #cbd5e1;
+  }
   .flash {
     animation: flash 0.6s ease;
   }
   @keyframes flash {
-    0%   { transform: scale(1.06); }
+    0%   { transform: scale(1.04); }
     100% { transform: scale(1); }
   }
 </style>
@@ -131,24 +111,29 @@
 <body>
 
 <div class="card">
-  <div class="header">
+  <div class="topbar">
     <h1>Live Scoreboard</h1>
-    <div class="q-number" id="qNumber">Question --</div>
+    <span class="live"><span class="dot"></span><span id="connState">connecting…</span> · <span id="updatedAt">–</span></span>
   </div>
 
-  <div class="label">Question</div>
-  <p class="question" id="questionText">Waiting for data…</p>
+  <section>
+    <div class="label">Question Number</div>
+    <div class="q-number" id="qNumber">--</div>
+  </section>
 
-  <div class="label">Answer</div>
-  <div><span class="answer" id="answerText">--</span></div>
+  <hr class="divider">
 
-  <div class="label">Options</div>
-  <div class="options" id="optionsRow"></div>
+  <section>
+    <div class="label">Question</div>
+    <p class="question" id="questionText">Waiting for data…</p>
+  </section>
 
-  <div class="meta">
-    <span class="dot"></span><span id="connState">connecting…</span>
-    · updated <span id="updatedAt">–</span>
-  </div>
+  <hr class="divider">
+
+  <section>
+    <div class="label">Correct Option</div>
+    <div class="answer" id="answerText">--</div>
+  </section>
 </div>
 
 <!-- Firebase (free Spark plan) -->
@@ -172,58 +157,47 @@
   const qNumEl = document.getElementById("qNumber");
   const questionEl = document.getElementById("questionText");
   const answerEl = document.getElementById("answerText");
-  const optionsEl = document.getElementById("optionsRow");
   const updatedEl = document.getElementById("updatedAt");
   const connEl = document.getElementById("connState");
 
-  const LETTERS = "ABCDEFGH".split("");
-
-  function parseAnswerLetters(raw) {
-    // Accept "B", "B,C,D", "B, C, D" etc. -> ["B","C","D"]
-    if (!raw) return [];
+  // Pure letter list like "B" / "B,C,D" / "A, C" -> normalized "B, C, D"; else null.
+  function cleanAnswer(raw) {
+    if (!raw) return null;
+    const m = raw.trim().match(/^[A-Ha-h](\s*[,/&]\s*[A-Ha-h])*$/);
+    if (!m) return null;
     return raw
       .toUpperCase()
-      .split(/[\s,\/]+/)
-      .map(s => s.trim().charAt(0))
-      .filter(c => LETTERS.includes(c));
-  }
-
-  function renderOptions(letters) {
-    optionsEl.innerHTML = "";
-    if (!letters.length) {
-      optionsEl.style.display = "none";
-      return;
-    }
-    optionsEl.style.display = "flex";
-    const max = Math.max(...letters.map(c => LETTERS.indexOf(c)), 3) + 1;
-    for (let i = 0; i < Math.min(max, LETTERS.length); i++) {
-      const chip = document.createElement("div");
-      chip.className = "option" + (letters.includes(LETTERS[i]) ? " correct" : "");
-      chip.textContent = LETTERS[i];
-      optionsEl.appendChild(chip);
-    }
+      .split(/[,/&]/)
+      .map(s => s.trim())
+      .join(", ");
   }
 
   ref.on("value", (snapshot) => {
     const data = snapshot.val() || {};
 
-    const qNum = data.score !== undefined ? data.score : "--";
-    qNumEl.textContent = "Question " + qNum;
+    qNumEl.textContent = data.score !== undefined ? data.score : "--";
 
-    // Prefer structured fields; fall back to the legacy "text" blob.
-    const answer = (data.answer || "").trim();
+    const answerRaw = (data.answer || "").trim();
     const question = (data.question || "").trim();
-    if (answer || question) {
-      questionEl.textContent = question && question !== "(vision)"
-        ? question
-        : "(captured from screen – vision mode)";
-      answerEl.textContent = answer || "--";
+
+    if (question && question !== "(vision)") {
+      questionEl.textContent = question;
+    } else if (data.text) {
+      questionEl.textContent = data.text; // legacy blob
     } else {
-      questionEl.textContent = data.text || "Waiting for data…";
-      answerEl.textContent = "--";
+      questionEl.textContent = "(captured from screen – vision mode)";
     }
 
-    renderOptions(parseAnswerLetters(answer));
+    const letters = cleanAnswer(answerRaw);
+    if (letters) {
+      answerEl.textContent = letters;
+      answerEl.classList.remove("long");
+    } else {
+      // Model returned prose instead of letters – trim so the card stays readable.
+      const prose = answerRaw.length > 300 ? answerRaw.slice(0, 300).trimEnd() + "…" : (answerRaw || "--");
+      answerEl.textContent = prose;
+      answerEl.classList.add("long");
+    }
 
     updatedEl.textContent = data.updatedAt
       ? new Date(data.updatedAt).toLocaleString()
