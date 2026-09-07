@@ -6,22 +6,24 @@
 <title>Live Scoreboard</title>
 <style>
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
     min-height: 100vh;
+    min-height: 100dvh; /* mobile browsers: use dynamic viewport height */
     background: linear-gradient(135deg, #0f172a, #1e293b);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #f1f5f9;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 24px;
+    padding: clamp(16px, 4vw, 40px);
   }
   .card {
     background: #1e293b;
     border: 1px solid #334155;
-    border-radius: 24px;
-    padding: 48px 56px;
+    border-radius: clamp(14px, 3vw, 24px);
+    padding: clamp(20px, 5vw, 48px) clamp(18px, 5vw, 56px);
     max-width: 960px;
     width: 100%;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
@@ -30,18 +32,21 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 36px;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: clamp(20px, 5vw, 36px);
   }
   h1 {
-    font-size: 13px;
-    letter-spacing: 3px;
+    font-size: clamp(11px, 2.5vw, 13px);
+    letter-spacing: clamp(1.5px, 0.5vw, 3px);
     text-transform: uppercase;
     color: #64748b;
     margin: 0;
   }
   .live {
-    font-size: 12px;
+    font-size: clamp(10px, 2.2vw, 12px);
     color: #64748b;
+    white-space: nowrap;
   }
   .dot {
     display: inline-block;
@@ -57,44 +62,46 @@
     50%  { opacity: 0.3; }
     100% { opacity: 1; }
   }
-  section { padding: 28px 0; }
+  section { padding: clamp(16px, 4vw, 28px) 0; }
   .divider {
     border: none;
     border-top: 1px solid #334155;
     margin: 0;
   }
   .label {
-    font-size: 12px;
-    letter-spacing: 2.5px;
+    font-size: clamp(10px, 2.2vw, 12px);
+    letter-spacing: clamp(1.5px, 0.5vw, 2.5px);
     text-transform: uppercase;
     color: #64748b;
-    margin-bottom: 14px;
+    margin-bottom: clamp(8px, 2vw, 14px);
   }
   .q-number {
-    font-size: 56px;
+    font-size: clamp(36px, 10vw, 56px);
     font-weight: 800;
     line-height: 1;
     color: #38bdf8;
   }
   .question {
-    font-size: 22px;
+    font-size: clamp(16px, 4vw, 22px);
     line-height: 1.6;
     color: #e2e8f0;
     margin: 0;
     white-space: pre-wrap;
+    overflow-wrap: anywhere; /* long URLs/tokens wrap instead of overflowing */
     word-break: break-word;
   }
   .answer {
-    font-size: 44px;
+    font-size: clamp(30px, 8vw, 44px);
     font-weight: 800;
     color: #4ade80;
     letter-spacing: 2px;
     line-height: 1.2;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
     word-break: break-word;
   }
   .answer.long {
-    font-size: 18px;
+    font-size: clamp(15px, 3.5vw, 18px);
     font-weight: 500;
     letter-spacing: 0;
     color: #cbd5e1;
@@ -106,6 +113,14 @@
     0%   { transform: scale(1.04); }
     100% { transform: scale(1); }
   }
+
+  /* Small phones: tighter card, sections stack full-width (default already) */
+  @media (max-width: 480px) {
+    body { padding: 12px; align-items: flex-start; }
+    .card { border-radius: 16px; }
+  }
+
+  /* Tablets & up: nothing special needed – max-width already centers the card */
 </style>
 </head>
 <body>
