@@ -75,6 +75,24 @@
     color: #94a3b8;
     margin-bottom: clamp(8px, 2vw, 14px);
   }
+  /* Question number row: question text snippet left, big number right */
+  .q-number-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 3vw, 20px);
+  }
+  .q-snippet {
+    flex: 1;
+    font-size: clamp(10px, 2vw, 13px);
+    line-height: 1.5;
+    color: #94a3b8;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+  }
+
   /* Question number and correct answer share the same big bold style */
   .hero {
     font-size: clamp(36px, 10vw, 56px);
@@ -83,6 +101,7 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
+    flex-shrink: 0;
   }
   .q-number { color: #2563eb; }
   .answer   { color: #16a34a; letter-spacing: 2px; }
@@ -126,7 +145,10 @@
 
   <section>
     <div class="label">Question Number</div>
-    <div class="hero q-number" id="qNumber">--</div>
+    <div class="q-number-row">
+      <span class="q-snippet" id="qSnippet"></span>
+      <div class="hero q-number" id="qNumber">--</div>
+    </div>
   </section>
 
    <hr class="divider">
@@ -165,6 +187,7 @@
   const ref = db.ref("scoreboard"); // matches the path used by the bot
 
   const qNumEl = document.getElementById("qNumber");
+  const qSnippetEl = document.getElementById("qSnippet");
   const questionEl = document.getElementById("questionText");
   const answerEl = document.getElementById("answerText");
   const updatedEl = document.getElementById("updatedAt");
@@ -195,13 +218,14 @@
     const answerRaw = (data.answer || "").trim();
     const question = (data.question || "").trim();
 
+    // Snippet: show question text next to the number (hide placeholder)
+    qSnippetEl.textContent = (question && question !== "(vision)") ? question : "";
+
     if (question && question !== "(vision)") {
+      // OCR mode or vision mode with extracted question text
       questionEl.textContent = question;
-    } else if (data.text && cleanAnswer(answerRaw)) {
-      // legacy blob only makes sense as the question when the answer was clean
-      questionEl.textContent = data.text;
     } else {
-      questionEl.textContent = "(captured from screen – vision mode)";
+      questionEl.textContent = "📷 Answer extracted from screenshot (vision mode)";
     }
 
     const letters = cleanAnswer(answerRaw);
